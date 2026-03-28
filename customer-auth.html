@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join as Customer | My Kera</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .auth-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000 url('assets/hero_bg.png') no-repeat center center/cover;
+            position: relative;
+            padding: 2rem;
+        }
+        .auth-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        .glass-box {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 2rem;
+            padding: 3.5rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            color: white;
+            text-align: center;
+            animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes floatUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-box h2 { font-size: 2.5rem; margin-bottom: 0.5rem; color: white; letter-spacing: -0.02em; }
+        .glass-box p { color: rgba(255,255,255,0.7); margin-bottom: 2rem; }
+        
+        .glass-input {
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            padding: 1.15rem 1.25rem;
+            color: white;
+            margin-bottom: 1.25rem;
+            outline: none;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-family: var(--font-sys);
+        }
+        .glass-input::placeholder { color: rgba(255,255,255,0.4); }
+        .glass-input:focus { border-color: var(--primary-color); background: rgba(255,255,255,0.1); box-shadow: 0 0 15px rgba(46, 125, 50, 0.3); }
+        
+        .auth-switch {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+        .auth-switch a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
+        .auth-switch a:hover { text-decoration: underline; }
+        
+        .btn-full { width: 100%; margin-top: 1rem; font-size: 1.1rem; padding: 1.15rem; }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <span class="logo-emoji">🥥</span> My Kera
+            </a>
+            <div class="nav-actions">
+                <a href="index.html" class="btn btn-outline">Back to Home</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="auth-wrapper">
+        <div class="auth-overlay"></div>
+        <div class="glass-box">
+            <h2 id="auth-title">Welcome Back.</h2>
+            <p id="auth-subtitle">Sign in to your customer account.</p>
+            
+            <form id="customer-form">
+                <div id="signup-fields" style="display: none;">
+                    <input type="text" class="glass-input" placeholder="Full Name">
+                    <input type="text" class="glass-input" placeholder="Delivery Address">
+                    <input type="tel" class="glass-input" placeholder="Phone Number">
+                </div>
+                <input type="email" class="glass-input" placeholder="Email Address" required>
+                <input type="password" class="glass-input" placeholder="Password" required>
+                
+                <button type="submit" class="btn btn-primary btn-full" id="auth-btn">Sign In</button>
+            </form>
+            
+            <div class="auth-switch">
+                <span id="auth-text">Don't have an account?</span> 
+                <a href="#" id="toggle-auth">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('toggle-auth');
+        const signupFields = document.getElementById('signup-fields');
+        const authBtn = document.getElementById('auth-btn');
+        const authText = document.getElementById('auth-text');
+        const title = document.getElementById('auth-title');
+        const subtitle = document.getElementById('auth-subtitle');
+        
+        // Handle Submit
+        authBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const emailInput = document.querySelector('input[type="email"]').value;
+            const nameInput = document.querySelectorAll('.glass-input')[0].value;
+            
+            localStorage.setItem('currentUser', JSON.stringify({
+                id: 'c_' + Math.floor(Math.random() * 10000),
+                type: 'customer',
+                name: nameInput || 'Valued Customer',
+                email: emailInput || 'customer@example.com'
+            }));
+            
+            window.location.href = 'customer-dashboard.html';
+        });
+
+        let isLogin = true;
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLogin = !isLogin;
+            if(isLogin) {
+                signupFields.style.display = 'none';
+                authBtn.textContent = 'Sign In';
+                authText.textContent = "Don't have an account?";
+                toggleBtn.textContent = 'Sign up';
+                title.textContent = 'Welcome Back.';
+                subtitle.textContent = 'Sign in to your customer account.';
+            } else {
+                signupFields.style.display = 'block';
+                authBtn.textContent = 'Create Account';
+                authText.textContent = "Already have an account?";
+                toggleBtn.textContent = 'Sign in';
+                title.textContent = 'Join My Kera.';
+                subtitle.textContent = 'Create your customer account today.';
+            }
+        });
+    </script>
+</body>
+</html>

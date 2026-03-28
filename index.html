@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Kera | Direct-to-Consumer Coconut Marketplace</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="navbar" id="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <span class="logo-emoji">🥥</span> My Kera
+            </a>
+            <div class="nav-actions">
+                <a href="farmer-auth.html" class="btn btn-outline">Join as Farmer</a>
+                <a href="customer-auth.html" class="btn btn-primary">Join as Customer</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cinematic Hero Canvas Sequence -->
+    <section class="hero-container js-hero-container">
+        <div class="hero-sticky">
+            <div class="hero-bg-wrapper js-hero-bg">
+                <canvas id="hero-lightpass" class="hero-canvas"></canvas>
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-content js-hero-content">
+                <h1 class="hero-title">
+                    <span class="hero-line block js-hero-line-1">The origin of</span>
+                    <span class="hero-line block js-hero-line-2">fresh coconuts.</span>
+                </h1>
+                <p class="hero-subtitle js-hero-subtitle">Pro grade farm-to-table delivery.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Apple-style Details section removed per user request -->
+
+    <!-- Value Proposition with Staggered Fade Up -->
+    <section class="features-section section-padding">
+        <div class="container">
+            <div class="section-header text-center fm-fade-up">
+                <h2>Completely reimagined.</h2>
+                <p class="text-large text-muted mt-2">Connecting farmers and consumers like never before.</p>
+            </div>
+            
+            <div class="grid-2 mt-5">
+                <div class="card premium-card fm-fade-up js-delay-1">
+                    <div class="card-inner">
+                        <h3>Empowering Farmers</h3>
+                        <p>Real-time dashboards, stock management, and direct payments ensure rural farmers get exactly what they deserve.</p>
+                        <div class="card-image mt-4">
+                            <img src="assets/farmer_dashboard.png" alt="Farmer Dashboard">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card premium-card fm-fade-up js-delay-2">
+                    <div class="card-inner">
+                        <h3>Enriching Customers</h3>
+                        <p>Browse local farms, compare transparent prices, and request delivery immediately via our seamless PWA interface.</p>
+                        <div class="card-image mt-4">
+                            <img src="assets/customer_app.png" alt="Customer App">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market Intelligence -->
+    <section class="market-section section-padding bg-section" id="market">
+        <div class="container">
+            <div class="split-layout align-center">
+                <div class="fm-fade-up">
+                    <h2 class="massive-text">Market Intelligence. <br><span class="text-muted">Built in.</span></h2>
+                    <p class="mt-4 text-large">Make data-driven decisions with real-time analytics on coconut pricing and origin tracing.</p>
+                </div>
+                <div class="intel-visuals fm-fade-up js-delay-2">
+                    <div class="chart-card shadow-xl">
+                        <div class="chart-header">
+                            <span class="chart-title">Coconut Price Index</span>
+                            <span class="badge badge-success trend-up">↑ +4.2%</span>
+                        </div>
+                        <div class="chart-placeholder">
+                            <svg viewBox="0 0 400 150" class="line-chart w-full h-auto">
+                                <path d="M0 130 C 50 120, 100 140, 150 100 C 200 60, 250 80, 300 40 C 350 10, 380 30, 400 5" fill="none" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M0 130 C 50 120, 100 140, 150 100 C 200 60, 250 80, 300 40 C 350 10, 380 30, 400 5 L 400 150 L 0 150 Z" fill="url(#chart-gradient)" opacity="0.15"/>
+                                <defs>
+                                    <linearGradient id="chart-gradient" x1="0" x2="0" y1="0" y2="1">
+                                        <stop offset="0%" stop-color="#2e7d32"/>
+                                        <stop offset="100%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customer Benefits -->
+    <section class="product-section section-padding bg-dark text-white">
+        <div class="container text-center fm-fade-up">
+            <h2 class="massive-text">Everything you need. <br><span class="text-muted">Delivered fresh.</span></h2>
+        </div>
+        <div class="container grid-3 mt-5 pt-5 text-center">
+            <div class="stat-card fm-fade-up js-delay-1">
+                <div class="feature-icon large mb-4">🥥</div>
+                <h3 class="stat-label mb-2">Premium Quality</h3>
+                <p class="text-muted mt-2">Every coconut is hand-picked at peak ripeness, ensuring the sweetest water and tender meat for your family.</p>
+            </div>
+            <div class="stat-card fm-fade-up js-delay-2">
+                <div class="feature-icon large mb-4">🚚</div>
+                <h3 class="stat-label mb-2">Live Tracking</h3>
+                <p class="text-muted mt-2">Follow your order from the farm directly to your doorstep with our precise real-time GPS tracking system.</p>
+            </div>
+            <div class="stat-card fm-fade-up js-delay-3">
+                <div class="feature-icon large mb-4">📅</div>
+                <h3 class="stat-label mb-2">Flexible Subs</h3>
+                <p class="text-muted mt-2">Set up weekly or monthly deliveries. Never run out of fresh, healthy coconut water again.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- App / Features Showcase -->
+    <section class="app-showcase section-padding">
+        <div class="container">
+            <div class="split-layout align-center gap-lg">
+                <div class="fm-fade-up">
+                    <h2>Seamless technology. <br><span class="text-muted">Flawless experience.</span></h2>
+                    <ul class="feature-list mt-5">
+                        <li class="mb-5">
+                            <h4 class="text-large">Verified Rating System</h4>
+                            <p class="text-muted mt-2">Community-driven reviews ensure top quality produce and reliable buyers across all transactions.</p>
+                        </li>
+                        <li class="mb-5">
+                            <h4 class="text-large">Instant Communication</h4>
+                            <p class="text-muted mt-2">Integrated WhatsApp and Email links allow for incredibly quick, direct buyer-seller negotiations.</p>
+                        </li>
+                        <li>
+                            <h4 class="text-large">Progressive Web App</h4>
+                            <p class="text-muted mt-2">A lightning fast, app-like experience on any mobile device. Install directly without ever needing the app store.</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-visual fm-fade-up js-delay-2 p-4 bg-section rounded-2xl">
+                    <img src="assets/customer_app.png" alt="Customer App Interface" class="rounded-xl shadow-xl w-full float-anim">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer section-padding bg-dark text-white">
+        <div class="container text-center fm-fade-up">
+            <h2 class="mb-4">Ready to experience fresh?</h2>
+            <div class="flex-center gap-3 mt-4">
+                <a href="farmer-auth.html" class="btn btn-outline-white btn-large">Join as Farmer</a>
+                <a href="customer-auth.html" class="btn btn-primary btn-large">Join as Customer</a>
+            </div>
+            <div class="footer-bottom mt-5 pt-5 opacity-50 text-sm">
+                <p>&copy; 2026 My Kera. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

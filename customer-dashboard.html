@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Marketplace | My Kera</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="dash-header">
+        <a href="index.html" class="logo">
+            <span class="logo-emoji">🥥</span> Marketplace
+        </a>
+        <div class="dash-actions">
+            <!-- Simulated Notification Bell -->
+            <button class="avatar-btn" style="background:transparent; border:1px solid #ccc; width:auto; border-radius:1rem; padding:0 1rem; display:flex; align-items:center; gap:0.5rem;" onclick="logout()">
+                Log Out
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-container">
+        <header style="margin-bottom: 2rem;">
+            <h1 class="massive-text" style="font-size: 2.5rem;" id="welcome-text">Fresh Coconuts.</h1>
+            <p class="text-muted mt-2">Connect and purchase directly from local farmers.</p>
+        </header>
+
+        <div class="marketplace-grid" id="market-feed">
+            <!-- JavaScript will render farmer cards here -->
+        </div>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (!user || user.type !== 'customer') {
+                window.location.href = 'customer-auth.html';
+                return;
+            }
+
+            document.getElementById('welcome-text').textContent = `Hi, ${user.name.split(' ')[0]}.`;
+
+            const marketFeed = document.getElementById('market-feed');
+            const farmers = getFarmers();
+
+            if(farmers.length === 0) {
+                marketFeed.innerHTML = `<p class="text-muted">No farmers available in the marketplace currently.</p>`;
+                return;
+            }
+
+            // Render logic
+            farmers.forEach(f => {
+                const isAvailable = f.stock > 0;
+                
+                const cardHtml = `
+                    <div class="farmer-card ${isAvailable ? '' : 'inactive'}">
+                        <div class="farmer-card-header">
+                            <img src="${f.photoUrl}" class="farmer-card-avatar" alt="${f.name}">
+                        </div>
+                        <div class="farmer-card-body">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div>
+                                    <h3 class="farmer-name">${f.name}</h3>
+                                    <div class="farmer-location">📍 ${f.location} | ${f.farm}</div>
+                                </div>
+                                <span class="badge ${isAvailable ? 'available' : 'unavailable'}">
+                                    ${isAvailable ? 'Available' : 'No Stock'}
+                                </span>
+                            </div>
+
+                            <div class="farmer-stats">
+                                <div>
+                                    <div class="farmer-stat-val">₹${f.price}</div>
+                                    <div class="farmer-stat-label">per piece</div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <div class="farmer-stat-val" style="color:var(--text-main);">${f.stock}</div>
+                                    <div class="farmer-stat-label">in stock</div>
+                                </div>
+                            </div>
+
+                            <div class="farmer-actions">
+                                <a href="${isAvailable ? 'tel:'+f.phone : '#'}" class="btn btn-outline" style="min-width:40px; text-align:center;">📞</a>
+                                <a href="${isAvailable ? '#' : '#'}" class="btn btn-outline" style="min-width:40px; text-align:center;">💬</a>
+                                <button class="btn ${isAvailable ? 'btn-primary' : 'btn-outline'}" style="flex:auto;" 
+                                    ${!isAvailable ? 'disabled' : ''} 
+                                    onclick="triggerMockPayment('${f.id}', '${f.farm}', ${f.price})">
+                                    Pay Securely
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                marketFeed.innerHTML += cardHtml;
+            });
+        });
+
+        // Global mock payment function
+        window.triggerMockPayment = function(farmerId, farmName, price) {
+            const user = getCurrentUser();
+            const qtyStr = prompt(`How many coconuts would you like from ${farmName} at ₹${price} each?`);
+            if (!qtyStr) return;
+            
+            const qty = parseInt(qtyStr);
+            if (isNaN(qty) || qty <= 0) {
+                alert("Invalid quantity.");
+                return;
+            }
+
+            const totalAmount = qty * price;
+            const confirmMsg = `Secure Checkout: Pay ₹${totalAmount} to ${farmName} via UPI/Card?`;
+            
+            if (confirm(confirmMsg)) {
+                // Simulate Payment Success via our mock DB logic
+                createPayment(farmerId, user.name, totalAmount, qty);
+                
+                // Deduct stock
+                const farmers = getFarmers();
+                const fIndex = farmers.findIndex(f => f.id === farmerId);
+                if(fIndex >= 0) {
+                    farmers[fIndex].stock = Math.max(0, farmers[fIndex].stock - qty);
+                    saveFarmers(farmers);
+                }
+
+                alert('✅ Payment Successful! The farmer has been notified and stock has been updated.');
+                window.location.reload(); // Refresh to show new stock
+            }
+        };
+    </script>
+</body>
+</html>

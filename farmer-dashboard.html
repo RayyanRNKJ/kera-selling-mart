@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard | My Kera</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="dash-header">
+        <a href="index.html" class="logo">
+            <span class="logo-emoji">🥥</span> Dashboard
+        </a>
+        <div class="dash-actions">
+            <!-- Simulated Notification Bell -->
+            <button class="avatar-btn" style="background:transparent; border:1px solid #ccc;" onclick="alert('You have 0 new messages')">🔔</button>
+            <button class="avatar-btn" id="profile-btn">
+                <img id="header-avatar" src="https://ui-avatars.com/api/?name=F&background=2e7d32&color=fff" alt="Profile">
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-container">
+        <header style="margin-bottom: 2rem;">
+            <h1 class="massive-text" style="font-size: 2.5rem;" id="welcome-text">Welcome back.</h1>
+            <p class="text-muted mt-2">Manage your grove inventory and payments below.</p>
+        </header>
+
+        <div class="grid-2">
+            <!-- Stock Editor -->
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <h2 class="dash-card-title">Stock Management</h2>
+                    <span id="stock-badge" class="badge unavailable">Out of Stock</span>
+                </div>
+                <form id="stock-form">
+                    <div class="form-group">
+                        <label class="form-label">Price per Coconut (₹)</label>
+                        <input type="number" id="input-price" class="form-input" placeholder="e.g. 45" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Available Stock Quantity</label>
+                        <input type="number" id="input-stock" class="form-input" placeholder="e.g. 150" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full mt-2">Update Inventory</button>
+                </form>
+            </div>
+
+            <!-- Revenue Box -->
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <h2 class="dash-card-title">Recent Payments</h2>
+                    <span class="text-muted text-sm">Last 30 Days</span>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <p class="text-muted text-sm">Total Revenue</p>
+                    <div class="stat-number" id="total-revenue">₹0</div>
+                </div>
+
+                <div id="payment-list">
+                    <!-- JavaScript will populate this -->
+                    <div class="text-muted text-center py-4">No recent payments.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Profile Drawer -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+    <aside class="drawer" id="profile-drawer">
+        <div class="drawer-header">
+            <h3 style="font-weight: 700; font-size: 1.2rem;">Profile Settings</h3>
+            <button class="close-btn" id="close-drawer">×</button>
+        </div>
+        <div class="drawer-body">
+            <div style="text-align: center; margin-bottom: 2rem; position: relative;">
+                <img id="drawer-avatar" src="" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary-color); object-fit: cover;">
+                
+                <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                <div class="mt-2 text-sm text-primary" style="cursor: pointer; color: var(--primary-color); font-weight: 600;" id="trigger-upload">
+                    Change Photo
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="prof-name" class="form-input" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Farm / Business Name</label>
+                <input type="text" id="prof-farm" class="form-input" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="prof-email" class="form-input" readonly>
+            </div>
+        </div>
+        <div class="drawer-footer">
+            <button class="btn btn-outline w-full mb-2">Switch Theme 🌙</button>
+            <button class="btn btn-primary w-full" style="background:#c62828;" onclick="logout()">Log Out</button>
+        </div>
+    </aside>
+
+    <script src="dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (!user || user.type !== 'farmer') {
+                window.location.href = 'farmer-auth.html';
+                return;
+            }
+
+            // UI Elements
+            const welcomeText = document.getElementById('welcome-text');
+            const headerAvatar = document.getElementById('header-avatar');
+            const drawerAvatar = document.getElementById('drawer-avatar');
+            const stockBadge = document.getElementById('stock-badge');
+            const inputPrice = document.getElementById('input-price');
+            const inputStock = document.getElementById('input-stock');
+            const paymentList = document.getElementById('payment-list');
+            const totalRevenueEl = document.getElementById('total-revenue');
+
+            // Find farmer DB record or create it
+            let farmers = getFarmers();
+            let myRecord = farmers.find(f => f.id === user.id);
+            
+            if (!myRecord) {
+                // Initialize default profile based on auth data
+                myRecord = {
+                    id: user.id,
+                    name: user.name,
+                    farm: user.farm,
+                    location: 'Local Grove',
+                    email: user.email,
+                    phone: '+91 9999999999',
+                    price: 40,
+                    stock: 0,
+                    photoUrl: `https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=2e7d32&color=fff`
+                };
+                updateFarmerProfile(myRecord);
+            }
+
+            // Populate Initials
+            welcomeText.textContent = `Welcome, ${myRecord.name.split(' ')[0]}.`;
+            headerAvatar.src = myRecord.photoUrl;
+            drawerAvatar.src = myRecord.photoUrl;
+            document.getElementById('prof-name').value = myRecord.name;
+            document.getElementById('prof-farm').value = myRecord.farm;
+            document.getElementById('prof-email').value = myRecord.email;
+
+            inputPrice.value = myRecord.price;
+            inputStock.value = myRecord.stock;
+            
+            function updateStockUI(stock) {
+                if(stock > 0) {
+                    stockBadge.textContent = 'Available';
+                    stockBadge.className = 'badge available';
+                } else {
+                    stockBadge.textContent = 'Out of Stock';
+                    stockBadge.className = 'badge unavailable';
+                }
+            }
+            updateStockUI(myRecord.stock);
+
+            // Handle Stock Update
+            document.getElementById('stock-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newPrice = parseInt(inputPrice.value);
+                const newStock = parseInt(inputStock.value);
+                
+                myRecord.price = newPrice;
+                myRecord.stock = newStock;
+                updateFarmerProfile(myRecord);
+                
+                updateStockUI(newStock);
+                alert('Inventory successfully updated for ' + myRecord.farm);
+            });
+
+            // Handle Payments Rendering
+            function renderPayments() {
+                const myPayments = getPaymentsForFarmer(myRecord.id);
+                if (myPayments.length === 0) return;
+
+                let total = 0;
+                paymentList.innerHTML = '';
+                
+                myPayments.forEach(p => {
+                    total += p.amount;
+                    paymentList.innerHTML += `
+                        <div class="notification-item">
+                            <div>
+                                <div class="notification-title">Payment from ${p.customerName}</div>
+                                <div class="notification-time">${new Date(p.date).toLocaleDateString()} • ${p.quantity} coconuts</div>
+                            </div>
+                            <div class="notification-amount">+₹${p.amount}</div>
+                        </div>
+                    `;
+                });
+                totalRevenueEl.textContent = `₹${total}`;
+            }
+            renderPayments();
+
+            // Drawer Logic
+            const drawer = document.getElementById('profile-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            
+            document.getElementById('profile-btn').addEventListener('click', () => {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+            });
+
+            const closeDrawer = () => {
+                drawer.classList.remove('open');
+                overlay.classList.remove('active');
+            };
+
+            document.getElementById('close-drawer').addEventListener('click', closeDrawer);
+            overlay.addEventListener('click', closeDrawer);
+
+            // Image Upload Handle
+            const imageUpload = document.getElementById('image-upload');
+            const triggerUpload = document.getElementById('trigger-upload');
+
+            triggerUpload.addEventListener('click', () => {
+                imageUpload.click();
+            });
+
+            imageUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const base64Data = event.target.result;
+                        // Instantly update UI
+                        headerAvatar.src = base64Data;
+                        drawerAvatar.src = base64Data;
+                        
+                        // Save permanently in DB
+                        myRecord.photoUrl = base64Data;
+                        updateFarmerProfile(myRecord);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
